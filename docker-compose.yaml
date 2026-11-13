@@ -1,0 +1,9 @@
+services:
+  fritzbox-monitor:
+    image: IlluminatorCologne/fritzbox-zabbix-monitoring:${VERSION}
+    container_name: fritzbox-zabbix-monitoring
+    restart: unless-stopped
+    env_file:
+      - .env
+    #volumes:
+    #  - ./zabbix.psk:/run/secrets/zabbix_psk:ro

@@ -1,0 +1,10 @@
+.env
+*.pyc
+__pycache__/
+.venv/
+*.log
+.DS_Store
+.idea/
+.vscode/
+.ruff_cache/
+docker-compose.local.yaml

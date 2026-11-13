@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+IMAGE_NAME="IlluminatorCologne/fritzbox-zabbix-monitoring"
+VERSION="${1:-latest}"
+echo "Building ${IMAGE_NAME}:${VERSION} ..."
+cd "$(dirname "$0")"
+docker build --no-cache -t "${IMAGE_NAME}:${VERSION}" .
+echo ""
+echo "Build complete: ${IMAGE_NAME}:${VERSION}"
+echo "To push:  docker push ${IMAGE_NAME}:${VERSION}"
+echo "To run:   docker compose up -d"

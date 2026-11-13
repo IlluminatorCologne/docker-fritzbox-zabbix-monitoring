@@ -1,0 +1,1936 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: b24a0dd18d354ea5b490164a51b6a2a8
+      name: 'Templates/Network devices'
+  templates:
+    - uuid: 565e73dca5ee4661a526ed217474dafc
+      template: 'AVM FritzBox TR-064'
+      name: 'AVM FritzBox TR-064'
+      description: |
+        Comprehensive monitoring for AVM Fritz!Box via TR-064, LUA, and Callmonitor.
+        https://github.com/illuminatorcologne/fritzbox-zabbix-monitoring
+      groups:
+        - name: 'Templates/Network devices'
+      items:
+        - uuid: bb888838ad234515804879f0df102976
+          name: 'Callmon: Available'
+          type: TRAP
+          key: fritzbox.callmon.available
+          description: '1=connected. Activate: dial #96*5*'
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 362992549357487db9d3183f357e7237
+          name: 'Callmon: Active calls'
+          type: TRAP
+          key: fritzbox.callmon.current_active
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: d2bd9de3fadc4063a9eaa878c08097b5
+          name: 'Callmon: Last called'
+          type: TRAP
+          key: fritzbox.callmon.last_called
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 405bc51e1c4d4725a1ace6e1438f1919
+          name: 'Callmon: Last caller'
+          type: TRAP
+          key: fritzbox.callmon.last_caller
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: f4477d3da2fd49b2bfa6c39e21766542
+          name: 'Callmon: Last event'
+          type: TRAP
+          key: fritzbox.callmon.last_event_type
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 150ee0bbd96449cba4374df4449fb1bc
+          name: 'Callmon: Total answered'
+          type: TRAP
+          key: fritzbox.callmon.total_answered
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 550baa33ec714765a6d27c27ff42d86c
+          name: 'Callmon: Total incoming'
+          type: TRAP
+          key: fritzbox.callmon.total_incoming
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 5eb22aa8fa0c4284a7f9fe09a653c26e
+          name: 'Callmon: Total missed'
+          type: TRAP
+          key: fritzbox.callmon.total_missed
+          tags:
+            - tag: component
+              value: callmonitor
+          triggers:
+            - uuid: d4958e9baa2c4d36b72ca0582a8e29ec
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.callmon.total_missed)>0'
+              name: 'FritzBox: Missed call'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 074994613678428b91c934e33a3d02c7
+          name: 'Callmon: Total outgoing'
+          type: TRAP
+          key: fritzbox.callmon.total_outgoing
+          tags:
+            - tag: component
+              value: callmonitor
+        - uuid: 1eed1ef0c5544177ba5085b1ca8f537a
+          name: 'Collector: Status'
+          type: TRAP
+          key: fritzbox.collector.status
+          tags:
+            - tag: component
+              value: collector
+          triggers:
+            - uuid: 70ea5f4c7a87425b9473225afc5333b1
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.collector.status)=0'
+              name: 'FritzBox: Collector cannot reach device'
+              priority: HIGH
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 74680f1d25a74929a5b0f23af36ecb08
+              expression: 'nodata(/AVM FritzBox TR-064/fritzbox.collector.status,300)=1'
+              name: 'FritzBox: No data received for 5 minutes for {HOST.NAME}'
+              priority: HIGH
+              tags:
+                - tag: scope
+                  value: availability
+        - uuid: 3259dd4670114bc3981410983bc721d2
+          name: 'Collector: Timestamp'
+          type: TRAP
+          key: fritzbox.collector.timestamp
+          units: unixtime
+          tags:
+            - tag: component
+              value: collector
+        - uuid: 1abdf7a780c6448e811eef0a572a4112
+          name: 'DECT: Device count'
+          type: TRAP
+          key: fritzbox.dect.device_count
+          tags:
+            - tag: component
+              value: smarthome
+        - uuid: 8be86493ab3649839278bf322d0f555e
+          name: 'Device: Firmware'
+          type: TRAP
+          key: fritzbox.device.firmware
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: device
+          triggers:
+            - uuid: 808c81cd27a8496ba881ab358d035848
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.device.firmware)<>0'
+              name: 'FritzBox: Firmware changed to {ITEM.LASTVALUE}'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: fc0aff617a1947daa592e6e88596a6f4
+          name: 'Device: Log'
+          type: TRAP
+          key: fritzbox.device.log
+          value_type: LOG
+          tags:
+            - tag: component
+              value: device
+        - uuid: 66acbe0c59c44bba98915340a5d2e2a5
+          name: 'Device: Model'
+          type: TRAP
+          key: fritzbox.device.model
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: device
+        - uuid: dc00001be5f64abc8def00000000001b
+          name: 'Device: Security port'
+          type: TRAP
+          key: fritzbox.device.security_port
+          tags:
+            - tag: component
+              value: device
+        - uuid: 4b4dae75ba434824965b62748028929a
+          name: 'Device: Serial'
+          type: TRAP
+          key: fritzbox.device.serial
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: device
+        - uuid: 578d0b0d7a5f4dada2fd883c40dc5003
+          name: 'Device: Uptime'
+          type: TRAP
+          key: fritzbox.device.uptime
+          units: s
+          tags:
+            - tag: component
+              value: device
+          triggers:
+            - uuid: 99b85b81ec0b493fa57c8c10d36822eb
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.device.uptime)<{$FRITZBOX.UPTIME.MIN}'
+              name: 'FritzBox: Device recently rebooted'
+              priority: WARNING
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 3cdf35049e2841e3920002de5307e78e
+          name: 'Fiber: Optical receive level'
+          type: TRAP
+          key: fritzbox.fiber.optical_rx_dbm
+          value_type: FLOAT
+          units: dBm
+          description: 'Downstream optical signal level (X_AVM-DE_WANFiber GetInfo).'
+          tags:
+            - tag: component
+              value: fiber
+          triggers:
+            - uuid: a0e90cbfc2214d7db85c6764ec4876e3
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_dbm)<last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_lower_threshold_dbm) and last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_lower_threshold_dbm)<>0'
+              name: 'FritzBox: Optical receive level too low ({ITEM.LASTVALUE}) for {HOST.NAME}'
+              priority: HIGH
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 5e2020b5c7284ce492e7926ae62a89bf
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_dbm)>last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_upper_threshold_dbm) and last(/AVM FritzBox TR-064/fritzbox.fiber.optical_rx_upper_threshold_dbm)<>0'
+              name: 'FritzBox: Optical receive level too high ({ITEM.LASTVALUE}) for {HOST.NAME}'
+              priority: WARNING
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: ebc6c943d1f1463cbc08002b2d697215
+          name: 'Fiber: Optical receive level lower threshold'
+          type: TRAP
+          key: fritzbox.fiber.optical_rx_lower_threshold_dbm
+          value_type: FLOAT
+          units: dBm
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: e3ec4118afe24ab19ec23f2c3be980bb
+          name: 'Fiber: Optical receive level upper threshold'
+          type: TRAP
+          key: fritzbox.fiber.optical_rx_upper_threshold_dbm
+          value_type: FLOAT
+          units: dBm
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: aa2c64f1c7e64715a7ddd6f0091e149c
+          name: 'Fiber: Optical transmit level'
+          type: TRAP
+          key: fritzbox.fiber.optical_tx_dbm
+          value_type: FLOAT
+          units: dBm
+          description: 'Mean optical launch power of the SFP module.'
+          tags:
+            - tag: component
+              value: fiber
+          triggers:
+            - uuid: 7d2bc90defa4434cb09f172a5d2002d0
+              expression: '(last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_dbm)<last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_lower_threshold_dbm) and last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_lower_threshold_dbm)<>0) or (last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_dbm)>last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_upper_threshold_dbm) and last(/AVM FritzBox TR-064/fritzbox.fiber.optical_tx_upper_threshold_dbm)<>0)'
+              name: 'FritzBox: Optical transmit level out of range ({ITEM.LASTVALUE}) for {HOST.NAME}'
+              priority: WARNING
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 54b83c3b6c0f4b599165bad6dce191f7
+          name: 'Fiber: Optical transmit level lower threshold'
+          type: TRAP
+          key: fritzbox.fiber.optical_tx_lower_threshold_dbm
+          value_type: FLOAT
+          units: dBm
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: bfb6158bbfff4f23babb2363dedcd9c7
+          name: 'Fiber: Optical transmit level upper threshold'
+          type: TRAP
+          key: fritzbox.fiber.optical_tx_upper_threshold_dbm
+          value_type: FLOAT
+          units: dBm
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: b10fee80b1c048e8900639e679a9951e
+          name: 'Fiber: Laser temperature'
+          type: TRAP
+          key: fritzbox.fiber.laser_temperature
+          value_type: FLOAT
+          units: '°C'
+          description: 'SFP laser temperature (web UI, LUA).'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 418861c9157444d999ae6f328548dab3
+          name: 'Fiber: Laser supply voltage'
+          type: TRAP
+          key: fritzbox.fiber.laser_voltage
+          value_type: FLOAT
+          units: V
+          description: 'SFP laser supply voltage (web UI, LUA).'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: dd52293a917b4438b92cbc2cfbc237cd
+          name: 'Fiber: Mode'
+          type: TRAP
+          key: fritzbox.fiber.mode
+          value_type: TEXT
+          description: 'Current fibre mode (AON, GPON, XGPON, XGSPON, ...).'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: cc23ef31a08c4dbd99fc97190c7fda4e
+          name: 'Fiber: Ethernet link status'
+          type: TRAP
+          key: fritzbox.fiber.link_status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 33a0570e30874dc3b9c299fe38cd2dc0
+          name: 'Fiber: SFP vendor'
+          type: TRAP
+          key: fritzbox.fiber.sfp_vendor
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: a68049f2e5104503b9ddb6e0f0eb6176
+          name: 'Fiber: SFP part number'
+          type: TRAP
+          key: fritzbox.fiber.sfp_part_number
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: cd344a3f24814d448806ac606adaae72
+          name: 'Fiber: SFP serial number'
+          type: TRAP
+          key: fritzbox.fiber.sfp_serial_number
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 47533afbaff440508761b840f0992527
+          name: 'Fiber: SFP type'
+          type: TRAP
+          key: fritzbox.fiber.sfp_type
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 3e8d1ea3ec304da688d2e9c49ce081cf
+          name: 'Fiber: TX wavelength'
+          type: TRAP
+          key: fritzbox.fiber.tx_wavelength
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 11a11eb69d6642599ab78ef98cb52fbf
+          name: 'Fiber GPON: Serial'
+          type: TRAP
+          key: fritzbox.fiber.gpon_serial
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 3f5499db2cae4a6b8207ba88fece79c3
+          name: 'Fiber GPON: PON ID'
+          type: TRAP
+          key: fritzbox.fiber.pon_id
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 4fa58204049540e5a34ab140c2fc914a
+          name: 'Fiber GPON: ONU ID'
+          type: TRAP
+          key: fritzbox.fiber.onu_id
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: ebb49d4878f04fe68440d2a89a08f15e
+          name: 'Fiber GPON: UNI type'
+          type: TRAP
+          key: fritzbox.fiber.uni_type
+          value_type: TEXT
+          description: 'PPTP or VEIP'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 2aa12a2d5b1849eea60a5cc464153ae5
+          name: 'Fiber GPON: GEM port count'
+          type: TRAP
+          key: fritzbox.fiber.gem_port_count
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 2ddaeaa7937646c9875e72e8f740aa24
+          name: 'Fiber: Bytes received'
+          type: TRAP
+          key: fritzbox.fiber.bytes_received
+          units: B
+          description: '32-bit counter as reported by FRITZ!OS, wraps at 4 GiB.'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 98c62044b4704be4be5aaae346069978
+          name: 'Fiber: Bytes sent'
+          type: TRAP
+          key: fritzbox.fiber.bytes_sent
+          units: B
+          description: '32-bit counter as reported by FRITZ!OS, wraps at 4 GiB.'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 0546488e0ba3424db06cb718ed1d97d1
+          name: 'Fiber: Packets received'
+          type: TRAP
+          key: fritzbox.fiber.packets_received
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 403be087877a4656bcb8cc8950e973c2
+          name: 'Fiber: Packets sent'
+          type: TRAP
+          key: fritzbox.fiber.packets_sent
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 1ccfcc4cf3934305b24c669d0b304110
+          name: 'Fiber: Packet errors received'
+          type: TRAP
+          key: fritzbox.fiber.packet_errors_received
+          tags:
+            - tag: component
+              value: fiber
+          triggers:
+            - uuid: 1ec755ba5cf44cce9ab069fcd05b3cf3
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.fiber.packet_errors_received)>{$FRITZBOX.FIBER.PACKET_ERRORS.THRESHOLD}'
+              name: 'FritzBox: High packet error rate on fiber link'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 228f4ebe9480406e934ef8f537d20294
+          name: 'Fiber: Packet errors sent'
+          type: TRAP
+          key: fritzbox.fiber.packet_errors_sent
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 52bb4708183747a3abdfb2f6b4b62ef8
+          name: 'Fiber: Multicast packets'
+          type: TRAP
+          key: fritzbox.fiber.packets_multicast
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 2c23548cfde9467baf349d48dd048fd6
+          name: 'Fiber: Connection rate down'
+          type: TRAP
+          key: fritzbox.fiber.rate_down
+          description: 'Unit as reported by FRITZ!OS (not documented by AVM).'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 8e6899620b004ea9930a738437b68036
+          name: 'Fiber: Connection rate up'
+          type: TRAP
+          key: fritzbox.fiber.rate_up
+          description: 'Unit as reported by FRITZ!OS (not documented by AVM).'
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 6fce000906834bc08614a7dc0f22d13f
+          name: 'Fiber: Best train state'
+          type: TRAP
+          key: fritzbox.fiber.best_train_state
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: 662342e7058d4e83ab98758ca89ea4c4
+          name: 'Fiber: Resyncs'
+          type: TRAP
+          key: fritzbox.fiber.resyncs
+          tags:
+            - tag: component
+              value: fiber
+          triggers:
+            - uuid: 9bfec85bd5ee4364bd89cba5a127849f
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.fiber.resyncs)>0'
+              name: 'FritzBox: Fiber link resynced on {HOST.NAME}'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: a23adda551d6481d8b91ba7dcf56ee94
+          name: 'Fiber: Minutes in showtime'
+          type: TRAP
+          key: fritzbox.fiber.minutes_in_showtime
+          units: min
+          tags:
+            - tag: component
+              value: fiber
+        - uuid: dc000001e5f64abc8def000000000001
+          name: 'DSL: ATUC CRC errors'
+          type: TRAP
+          key: fritzbox.dsl.atuc_crc_errors
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000002e5f64abc8def000000000002
+          name: 'DSL: ATUC FEC errors'
+          type: TRAP
+          key: fritzbox.dsl.atuc_fec_errors
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000003e5f64abc8def000000000003
+          name: 'DSL: ATUC HEC errors'
+          type: TRAP
+          key: fritzbox.dsl.atuc_hec_errors
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: 7985ddbcaf954215872ad59549cf102a
+          name: 'DSL: CRC errors (near)'
+          type: TRAP
+          key: fritzbox.dsl.crc_errors
+          tags:
+            - tag: component
+              value: dsl
+          triggers:
+            - uuid: 611ec14f21994a6a83a341443cf01fb8
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.dsl.crc_errors)>{$FRITZBOX.DSL.CRC_ERRORS.THRESHOLD}'
+              name: 'FritzBox: High CRC error rate on DSL'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 4a81c99e732f4840922d5ef23234161c
+          name: 'DSL: Downstream attenuation'
+          type: TRAP
+          key: fritzbox.dsl.downstream_attenuation
+          units: dB
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: 982734fc237f4ea9b930e34ec94ff34f
+          name: 'DSL: Downstream sync rate'
+          type: TRAP
+          key: fritzbox.dsl.downstream_curr_rate
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000004e5f64abc8def000000000004
+          name: 'DSL: Downstream max rate'
+          type: TRAP
+          key: fritzbox.dsl.downstream_max_rate
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: e19f8a5ef180485f952a24646393e278
+          name: 'DSL: Downstream noise margin'
+          type: TRAP
+          key: fritzbox.dsl.downstream_noise_margin
+          units: dB
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            - tag: component
+              value: dsl
+          triggers:
+            - uuid: 86d78857b9814d2bb7b85d6204d16c4c
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.dsl.downstream_noise_margin)<{$FRITZBOX.DSL.NOISE_MARGIN.MIN}'
+              name: 'FritzBox: DSL noise margin low ({ITEM.LASTVALUE} dB)'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: dc000005e5f64abc8def000000000005
+          name: 'DSL: Downstream power'
+          type: TRAP
+          key: fritzbox.dsl.downstream_power
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: f90b6ed6dde64f57a76c2d76d049675f
+          name: 'DSL: FEC errors (near)'
+          type: TRAP
+          key: fritzbox.dsl.fec_errors
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000006e5f64abc8def000000000006
+          name: 'DSL: HEC errors (near)'
+          type: TRAP
+          key: fritzbox.dsl.hec_errors
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000007e5f64abc8def000000000007
+          name: 'DSL: Link status'
+          type: TRAP
+          key: fritzbox.dsl.link_status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000008e5f64abc8def000000000008
+          name: 'DSL: Link type'
+          type: TRAP
+          key: fritzbox.dsl.link_type
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: 1ba4666e85214662a69dc5b253d51127
+          name: 'DSL: Status'
+          type: TRAP
+          key: fritzbox.dsl.status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: dsl
+          triggers:
+            - uuid: 539015c5448747599d0ea0795fe8e76b
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.dsl.status)<>"Up"'
+              name: 'FritzBox: DSL link not up ({ITEM.LASTVALUE}) for {HOST.NAME}'
+              priority: HIGH
+              manual_close: 'YES'
+              dependencies:
+                - name: 'FritzBox: WAN disconnected for {HOST.NAME}'
+                  expression: 'last(/AVM FritzBox TR-064/fritzbox.wan.is_connected)=0'
+              tags:
+                - tag: scope
+                  value: availability
+        - uuid: ed5b0d73df2d40a2853d16f2ffca3c72
+          name: 'DSL: Upstream attenuation'
+          type: TRAP
+          key: fritzbox.dsl.upstream_attenuation
+          units: dB
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: 8e63e0c005b34c67a9ac5eb9a8acbf9a
+          name: 'DSL: Upstream sync rate'
+          type: TRAP
+          key: fritzbox.dsl.upstream_curr_rate
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc000009e5f64abc8def000000000009
+          name: 'DSL: Upstream max rate'
+          type: TRAP
+          key: fritzbox.dsl.upstream_max_rate
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: 346e9b2d2e9a404f9091851ccb3d7a9c
+          name: 'DSL: Upstream noise margin'
+          type: TRAP
+          key: fritzbox.dsl.upstream_noise_margin
+          units: dB
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc00000ae5f64abc8def00000000000a
+          name: 'DSL: Upstream power'
+          type: TRAP
+          key: fritzbox.dsl.upstream_power
+          tags:
+            - tag: component
+              value: dsl
+        - uuid: dc00000be5f64abc8def00000000000b
+          name: 'DSL Detail: Downstream attenuation'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.attn
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc00000ce5f64abc8def00000000000c
+          name: 'DSL Detail: Downstream capacity'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.capacity
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc00000de5f64abc8def00000000000d
+          name: 'DSL Detail: Downstream CRC/min'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.crcPerMin
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc00000ee5f64abc8def00000000000e
+          name: 'DSL Detail: Downstream error seconds'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.errSeconds
+          units: s
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc00000fe5f64abc8def00000000000f
+          name: 'DSL Detail: Downstream loss of frame'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.lossOfFrame
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000010e5f64abc8def000000000010
+          name: 'DSL Detail: Downstream loss of signal'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.lossOfSignal
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000011e5f64abc8def000000000011
+          name: 'DSL Detail: Downstream severe error seconds'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.sevErrSeconds
+          units: s
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000012e5f64abc8def000000000012
+          name: 'DSL Detail: Downstream SNR'
+          type: TRAP
+          key: fritzbox.dsl_detail.ds.snr
+          units: dB
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000013e5f64abc8def000000000013
+          name: 'DSL Detail: Upstream attenuation'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.attn
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000014e5f64abc8def000000000014
+          name: 'DSL Detail: Upstream capacity'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.capacity
+          units: kbps
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000015e5f64abc8def000000000015
+          name: 'DSL Detail: Upstream CRC/min'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.crcPerMin
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000016e5f64abc8def000000000016
+          name: 'DSL Detail: Upstream error seconds'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.errSeconds
+          units: s
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000017e5f64abc8def000000000017
+          name: 'DSL Detail: Upstream loss of frame'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.lossOfFrame
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000018e5f64abc8def000000000018
+          name: 'DSL Detail: Upstream loss of signal'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.lossOfSignal
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc000019e5f64abc8def000000000019
+          name: 'DSL Detail: Upstream severe error seconds'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.sevErrSeconds
+          units: s
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: dc00001ae5f64abc8def00000000001a
+          name: 'DSL Detail: Upstream SNR'
+          type: TRAP
+          key: fritzbox.dsl_detail.us.snr
+          units: dB
+          tags:
+            - tag: component
+              value: dsl
+            - tag: source
+              value: lua
+        - uuid: 8afd3370be264c38a60faca84c4c41c7
+          name: 'LAN: Active hosts'
+          type: TRAP
+          key: fritzbox.lan.active_hosts
+          tags:
+            - tag: component
+              value: lan
+        - uuid: 84c40f846d5b4db3ac2a4aa3f2c20ac1
+          name: 'LAN: Active LAN hosts'
+          type: TRAP
+          key: fritzbox.lan.active_lan_hosts
+          tags:
+            - tag: component
+              value: lan
+        - uuid: 0a8ddb5223fc45b999d0288ef315c47a
+          name: 'LAN: Active WLAN hosts'
+          type: TRAP
+          key: fritzbox.lan.active_wlan_hosts
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00001de5f64abc8def00000000001d
+          name: 'LAN: ETH1 bytes received'
+          type: TRAP
+          key: fritzbox.lan.eth1.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00001ee5f64abc8def00000000001e
+          name: 'LAN: ETH1 bytes sent'
+          type: TRAP
+          key: fritzbox.lan.eth1.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00001fe5f64abc8def00000000001f
+          name: 'LAN: ETH1 packets received'
+          type: TRAP
+          key: fritzbox.lan.eth1.packets_received
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000020e5f64abc8def000000000020
+          name: 'LAN: ETH1 packets sent'
+          type: TRAP
+          key: fritzbox.lan.eth1.packets_sent
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000021e5f64abc8def000000000021
+          name: 'LAN: ETH2 bytes received'
+          type: TRAP
+          key: fritzbox.lan.eth2.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000022e5f64abc8def000000000022
+          name: 'LAN: ETH2 bytes sent'
+          type: TRAP
+          key: fritzbox.lan.eth2.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000023e5f64abc8def000000000023
+          name: 'LAN: ETH2 packets received'
+          type: TRAP
+          key: fritzbox.lan.eth2.packets_received
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000024e5f64abc8def000000000024
+          name: 'LAN: ETH2 packets sent'
+          type: TRAP
+          key: fritzbox.lan.eth2.packets_sent
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000025e5f64abc8def000000000025
+          name: 'LAN: ETH3 bytes received'
+          type: TRAP
+          key: fritzbox.lan.eth3.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000026e5f64abc8def000000000026
+          name: 'LAN: ETH3 bytes sent'
+          type: TRAP
+          key: fritzbox.lan.eth3.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000027e5f64abc8def000000000027
+          name: 'LAN: ETH3 packets received'
+          type: TRAP
+          key: fritzbox.lan.eth3.packets_received
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000028e5f64abc8def000000000028
+          name: 'LAN: ETH3 packets sent'
+          type: TRAP
+          key: fritzbox.lan.eth3.packets_sent
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc000029e5f64abc8def000000000029
+          name: 'LAN: ETH4 bytes received'
+          type: TRAP
+          key: fritzbox.lan.eth4.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00002ae5f64abc8def00000000002a
+          name: 'LAN: ETH4 bytes sent'
+          type: TRAP
+          key: fritzbox.lan.eth4.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00002be5f64abc8def00000000002b
+          name: 'LAN: ETH4 packets received'
+          type: TRAP
+          key: fritzbox.lan.eth4.packets_received
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00002ce5f64abc8def00000000002c
+          name: 'LAN: ETH4 packets sent'
+          type: TRAP
+          key: fritzbox.lan.eth4.packets_sent
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00001ce5f64abc8def00000000001c
+          name: 'LAN: Host count'
+          type: TRAP
+          key: fritzbox.lan.host_count
+          tags:
+            - tag: component
+              value: lan
+        - uuid: 06b22eee533c42e689d068425783d74b
+          name: 'LAN: Total hosts'
+          type: TRAP
+          key: fritzbox.lan.total_hosts
+          tags:
+            - tag: component
+              value: lan
+        - uuid: dc00002de5f64abc8def00000000002d
+          name: 'MyFRITZ: DynDNS name'
+          type: TRAP
+          key: fritzbox.myfritz.dyndns
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+        - uuid: f93ad69d92da4cbb88ecd2b237850879
+          name: 'MyFRITZ: Enabled'
+          type: TRAP
+          key: fritzbox.myfritz.enabled
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+        - uuid: 1d02e813d55640e4a9bd3db3ef0d761e
+          name: 'NetDev: Active count'
+          type: TRAP
+          key: fritzbox.netdev.active_count
+          tags:
+            - tag: component
+              value: netdev
+            - tag: source
+              value: lua
+        - uuid: 6470494a21c54d93841a5c0e7141e252
+          name: 'NetDev: Passive count'
+          type: TRAP
+          key: fritzbox.netdev.passive_count
+          tags:
+            - tag: component
+              value: netdev
+            - tag: source
+              value: lua
+        - uuid: dc00002ee5f64abc8def00000000002e
+          name: 'Overview: Connection info'
+          type: TRAP
+          key: fritzbox.overview.connection_info
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: overview
+            - tag: source
+              value: lua
+        - uuid: dc00002fe5f64abc8def00000000002f
+          name: 'Overview: Provider info'
+          type: TRAP
+          key: fritzbox.overview.provider_info
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: overview
+            - tag: source
+              value: lua
+        - uuid: dc000030e5f64abc8def000000000030
+          name: 'Overview: USB devices'
+          type: TRAP
+          key: fritzbox.overview.usb_devices
+          tags:
+            - tag: component
+              value: overview
+            - tag: source
+              value: lua
+        - uuid: 85768097777d4372bb7dbe5f9501b761
+          name: 'System: CPU temperature'
+          type: TRAP
+          key: fritzbox.system.cpu_temperature
+          units: °C
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+          triggers:
+            - uuid: 3e0d0bd01d39400284ec5900e7994218
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.system.cpu_temperature)>{$FRITZBOX.CPU_TEMP.HIGH}'
+              name: 'FritzBox: CPU temperature critical ({ITEM.LASTVALUE})'
+              priority: HIGH
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: d60d1fac91d24409800033464cc60bec
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.system.cpu_temperature)>{$FRITZBOX.CPU_TEMP.WARN}'
+              name: 'FritzBox: CPU temperature high ({ITEM.LASTVALUE})'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 04c1b81bb2a749eba2a9571f060ce6c4
+          name: 'System: CPU usage'
+          type: TRAP
+          key: fritzbox.system.cpu_usage
+          units: '%'
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+          triggers:
+            - uuid: 9cc58376db9f48879bdabaaa2c4b56ef
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.system.cpu_usage)>{$FRITZBOX.CPU_USAGE.WARN}'
+              name: 'FritzBox: CPU usage high ({ITEM.LASTVALUE})'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: dc000031e5f64abc8def000000000031
+          name: 'System: RAM cached'
+          type: TRAP
+          key: fritzbox.system.ram_cached
+          units: B
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+        - uuid: dc000032e5f64abc8def000000000032
+          name: 'System: RAM fixed'
+          type: TRAP
+          key: fritzbox.system.ram_fixed
+          units: B
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+        - uuid: ddbcc19c6b384a7db78cb4b4e93d8fbb
+          name: 'System: RAM free'
+          type: TRAP
+          key: fritzbox.system.ram_free
+          units: B
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+        - uuid: dc000033e5f64abc8def000000000033
+          name: 'System: RAM total'
+          type: TRAP
+          key: fritzbox.system.ram_total
+          units: B
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+        - uuid: d95629b3b222409085bdd26d27894ce9
+          name: 'System: RAM usage'
+          type: TRAP
+          key: fritzbox.system.ram_usage_percent
+          units: '%'
+          tags:
+            - tag: component
+              value: system
+            - tag: source
+              value: lua
+          triggers:
+            - uuid: a3aa0f1e32e54f07bb39589a88efba6d
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.system.ram_usage_percent)>{$FRITZBOX.RAM_USAGE.WARN}'
+              name: 'FritzBox: RAM usage high ({ITEM.LASTVALUE}%)'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: e4de21650a99428dbd8c19d07fd51c82
+          name: 'Traffic: Month received'
+          type: TRAP
+          key: fritzbox.traffic.month.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: a0cb16711338439fbafba079fd14c0bb
+          name: 'Traffic: Month sent'
+          type: TRAP
+          key: fritzbox.traffic.month.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: 9faac982721f48c6a92e116433794058
+          name: 'Traffic: Today received'
+          type: TRAP
+          key: fritzbox.traffic.today.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: d3ad36cd229e40fea3f8002a51c5c578
+          name: 'Traffic: Today sent'
+          type: TRAP
+          key: fritzbox.traffic.today.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: bd42d7b5d2cb4a318fc1da9b32c5c2fb
+          name: 'Traffic: Total received'
+          type: TRAP
+          key: fritzbox.traffic.total.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: d3d9a909492242458af752bedc5c95a9
+          name: 'Traffic: Total sent'
+          type: TRAP
+          key: fritzbox.traffic.total.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: dc000036e5f64abc8def000000000036
+          name: 'Traffic: Week received'
+          type: TRAP
+          key: fritzbox.traffic.week.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: dc000037e5f64abc8def000000000037
+          name: 'Traffic: Week sent'
+          type: TRAP
+          key: fritzbox.traffic.week.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: dc000034e5f64abc8def000000000034
+          name: 'Traffic: Yesterday received'
+          type: TRAP
+          key: fritzbox.traffic.yesterday.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: dc000035e5f64abc8def000000000035
+          name: 'Traffic: Yesterday sent'
+          type: TRAP
+          key: fritzbox.traffic.yesterday.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: traffic
+            - tag: source
+              value: lua
+        - uuid: e29f8a1ebc27423bbe57afa0431b94a7
+          name: 'Update: Available'
+          type: TRAP
+          key: fritzbox.update.available
+          tags:
+            - tag: component
+              value: update
+          triggers:
+            - uuid: 1e318540a53c46b7bb5ecd3b3413bd33
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.update.available)=1'
+              name: 'FritzBox: Firmware update available'
+              priority: WARNING
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: security
+        - uuid: dc000038e5f64abc8def000000000038
+          name: 'Update: Lab mode'
+          type: TRAP
+          key: fritzbox.update.lab_mode
+          tags:
+            - tag: component
+              value: update
+        - uuid: b623c6dc98bc44339119479072ce5426
+          name: 'Update: Latest version'
+          type: TRAP
+          key: fritzbox.update.latest_firmware
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: update
+        - uuid: 16cdb9a44f63417495381e4f7ecb4421
+          name: 'UPnP: Enabled'
+          type: TRAP
+          key: fritzbox.upnp.enabled
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+          triggers:
+            - uuid: 7af5e7e4ce684770a0f58f3575f52759
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.upnp.enabled)=1'
+              name: 'FritzBox: UPnP enabled'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: dc000039e5f64abc8def000000000039
+          name: 'USB: FTP enabled'
+          type: TRAP
+          key: fritzbox.usb.ftp_enabled
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+        - uuid: dc00003ae5f64abc8def00000000003a
+          name: 'USB: SMB enabled'
+          type: TRAP
+          key: fritzbox.usb.smb_enabled
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+        - uuid: 16eed7b95d6d458d9079e3fb3b6bda64
+          name: 'VPN: Remote access'
+          type: TRAP
+          key: fritzbox.vpn.remote_access_enabled
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: services
+        - uuid: 81ecdda8f9bb4592bb7787e4881d19ce
+          name: 'WAN: Access type'
+          type: TRAP
+          key: fritzbox.wan.access_type
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: dc26f880d7b44282936cbeb62f934653
+          name: 'WAN: Bytes received'
+          type: TRAP
+          key: fritzbox.wan.bytes_received
+          units: B
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 870c3d79cce24eee833f16e423890b14
+          name: 'WAN: Bytes sent'
+          type: TRAP
+          key: fritzbox.wan.bytes_sent
+          units: B
+          tags:
+            - tag: component
+              value: wan
+        - uuid: a385f54b0ac44c3f8af5b93bb7c0743c
+          name: 'WAN: Connection status'
+          type: TRAP
+          key: fritzbox.wan.connection_status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wan
+        - uuid: dc00003be5f64abc8def00000000003b
+          name: 'WAN: Connection type'
+          type: TRAP
+          key: fritzbox.wan.connection_type
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 5b8e926715f54517bac9d637dc9a2f8e
+          name: 'WAN: Connection uptime'
+          type: TRAP
+          key: fritzbox.wan.connection_uptime
+          units: s
+          tags:
+            - tag: component
+              value: wan
+        - uuid: f79ef1a876e6489898dd98be849fbd35
+          name: 'WAN: DNS servers'
+          type: TRAP
+          key: fritzbox.wan.dns_servers
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 80d220bb143e4be396c60ab56721867a
+          name: 'WAN: Downstream current'
+          type: TRAP
+          key: fritzbox.wan.downstream_current_bps
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: dc00003ce5f64abc8def00000000003c
+          name: 'WAN: Downstream max'
+          type: TRAP
+          key: fritzbox.wan.downstream_max_bps
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 1f7f3d2cc3cc435fb0820532e65ed55f
+          name: 'WAN: External IPv4'
+          type: TRAP
+          key: fritzbox.wan.external_ip
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '300'
+          tags:
+            - tag: component
+              value: wan
+          triggers:
+            - uuid: 133a941970624481b80402ff956a09e3
+              expression: 'change(/AVM FritzBox TR-064/fritzbox.wan.external_ip)<>0'
+              name: 'FritzBox: External IP changed to {ITEM.LASTVALUE}'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: cc737ccac2c2401eac5d4e4838632a70
+          name: 'WAN: External IPv6'
+          type: TRAP
+          key: fritzbox.wan.external_ipv6
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '300'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: dc00003de5f64abc8def00000000003d
+          name: 'WAN: External IPv6 prefix length'
+          type: TRAP
+          key: fritzbox.wan.external_ipv6_prefix
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '300'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: a5bd5ad7282748ab853442cf50d31239
+          name: 'WAN: Connected'
+          type: TRAP
+          key: fritzbox.wan.is_connected
+          tags:
+            - tag: component
+              value: wan
+          triggers:
+            - uuid: fab0032c598b4b79b25fa86ca2eaa1da
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.wan.is_connected)=0'
+              name: 'FritzBox: WAN disconnected for {HOST.NAME}'
+              priority: DISASTER
+              tags:
+                - tag: scope
+                  value: availability
+        - uuid: 6782b787d3b248f2bd3531d7f592d33a
+          name: 'WAN: Last error'
+          type: TRAP
+          key: fritzbox.wan.last_error
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 02fd6ba7175646dfb250b6b2f8f0c8dc
+          name: 'WAN: Layer1 downstream max'
+          type: TRAP
+          key: fritzbox.wan.layer1_downstream_max
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 39698a3c19da4617b370db72eb3aa6ab
+          name: 'WAN: Layer1 upstream max'
+          type: TRAP
+          key: fritzbox.wan.layer1_upstream_max
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: ee7a6585b7a84f19856e6a1cf6c6dd38
+          name: 'WAN: Packets received'
+          type: TRAP
+          key: fritzbox.wan.packets_received
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 1dcb9eadf5ca4b4291657a25dffcf544
+          name: 'WAN: Packets sent'
+          type: TRAP
+          key: fritzbox.wan.packets_sent
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 0e92cb1d8f034aabb6c0306e5ca51b0c
+          name: 'WAN: Physical link status'
+          type: TRAP
+          key: fritzbox.wan.physical_link_status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wan
+          triggers:
+            - uuid: 5c2a6633b6104d5d893f826eee6a5283
+              expression: 'last(/AVM FritzBox TR-064/fritzbox.wan.physical_link_status)<>"Up"'
+              name: 'FritzBox: WAN physical link down for {HOST.NAME}'
+              priority: HIGH
+              tags:
+                - tag: scope
+                  value: availability
+        - uuid: 645d002197614c3bac766b748f61c73f
+          name: 'WAN: Upstream current'
+          type: TRAP
+          key: fritzbox.wan.upstream_current_bps
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: dc00003ee5f64abc8def00000000003e
+          name: 'WAN: Upstream max'
+          type: TRAP
+          key: fritzbox.wan.upstream_max_bps
+          units: bps
+          tags:
+            - tag: component
+              value: wan
+        - uuid: 8951ddcdce8e4d27aa3b76059ad3a38e
+          name: 'WLAN 2.4 GHz: Channel'
+          type: TRAP
+          key: fritzbox.wlan.2g.channel
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: c333e7e1e4d74672950fde4697f3f05a
+          name: 'WLAN 2.4 GHz: Enabled'
+          type: TRAP
+          key: fritzbox.wlan.2g.enabled
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00003fe5f64abc8def00000000003f
+          name: 'WLAN 2.4 GHz: Encryption'
+          type: TRAP
+          key: fritzbox.wlan.2g.encryption
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000040e5f64abc8def000000000040
+          name: 'WLAN 2.4 GHz: Night control'
+          type: TRAP
+          key: fritzbox.wlan.2g.night_control
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000041e5f64abc8def000000000041
+          name: 'WLAN 2.4 GHz: Packets received'
+          type: TRAP
+          key: fritzbox.wlan.2g.packets_received
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000042e5f64abc8def000000000042
+          name: 'WLAN 2.4 GHz: Packets sent'
+          type: TRAP
+          key: fritzbox.wlan.2g.packets_sent
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 433d9a1300374153bab888525e12335f
+          name: 'WLAN 2.4 GHz: SSID'
+          type: TRAP
+          key: fritzbox.wlan.2g.ssid
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000043e5f64abc8def000000000043
+          name: 'WLAN 2.4 GHz: Standard'
+          type: TRAP
+          key: fritzbox.wlan.2g.standard
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000044e5f64abc8def000000000044
+          name: 'WLAN 2.4 GHz: Status'
+          type: TRAP
+          key: fritzbox.wlan.2g.status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 5c5a8fda6ba943538e8d8b030b0250ed
+          name: 'WLAN 2.4 GHz: Clients'
+          type: TRAP
+          key: fritzbox.wlan.2g.total_associations
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: a1efb0917fc3449da4344e9068d761bd
+          name: 'WLAN 5 GHz: Channel'
+          type: TRAP
+          key: fritzbox.wlan.5g.channel
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 738d5d589b4e472ea11f5817d236fd56
+          name: 'WLAN 5 GHz: Enabled'
+          type: TRAP
+          key: fritzbox.wlan.5g.enabled
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000045e5f64abc8def000000000045
+          name: 'WLAN 5 GHz: Encryption'
+          type: TRAP
+          key: fritzbox.wlan.5g.encryption
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000046e5f64abc8def000000000046
+          name: 'WLAN 5 GHz: Night control'
+          type: TRAP
+          key: fritzbox.wlan.5g.night_control
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000047e5f64abc8def000000000047
+          name: 'WLAN 5 GHz: Packets received'
+          type: TRAP
+          key: fritzbox.wlan.5g.packets_received
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000048e5f64abc8def000000000048
+          name: 'WLAN 5 GHz: Packets sent'
+          type: TRAP
+          key: fritzbox.wlan.5g.packets_sent
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 7f27bbade1384cf9989c5daa373165f1
+          name: 'WLAN 5 GHz: SSID'
+          type: TRAP
+          key: fritzbox.wlan.5g.ssid
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000049e5f64abc8def000000000049
+          name: 'WLAN 5 GHz: Standard'
+          type: TRAP
+          key: fritzbox.wlan.5g.standard
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004ae5f64abc8def00000000004a
+          name: 'WLAN 5 GHz: Status'
+          type: TRAP
+          key: fritzbox.wlan.5g.status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 1febb2f349e745cfa80d9b8a75ac6c2c
+          name: 'WLAN 5 GHz: Clients'
+          type: TRAP
+          key: fritzbox.wlan.5g.total_associations
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 79d376c2964e4559be509427b0f0035e
+          name: 'WLAN Guest: Channel'
+          type: TRAP
+          key: fritzbox.wlan.guest.channel
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: 7ff7a8fb84884fd88b463a374978494a
+          name: 'WLAN Guest: Enabled'
+          type: TRAP
+          key: fritzbox.wlan.guest.enabled
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004be5f64abc8def00000000004b
+          name: 'WLAN Guest: Encryption'
+          type: TRAP
+          key: fritzbox.wlan.guest.encryption
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004ce5f64abc8def00000000004c
+          name: 'WLAN Guest: Night control'
+          type: TRAP
+          key: fritzbox.wlan.guest.night_control
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004de5f64abc8def00000000004d
+          name: 'WLAN Guest: Packets received'
+          type: TRAP
+          key: fritzbox.wlan.guest.packets_received
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004ee5f64abc8def00000000004e
+          name: 'WLAN Guest: Packets sent'
+          type: TRAP
+          key: fritzbox.wlan.guest.packets_sent
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc00004fe5f64abc8def00000000004f
+          name: 'WLAN Guest: SSID'
+          type: TRAP
+          key: fritzbox.wlan.guest.ssid
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '86400'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000050e5f64abc8def000000000050
+          name: 'WLAN Guest: Standard'
+          type: TRAP
+          key: fritzbox.wlan.guest.standard
+          value_type: TEXT
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - '3600'
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: dc000051e5f64abc8def000000000051
+          name: 'WLAN Guest: Status'
+          type: TRAP
+          key: fritzbox.wlan.guest.status
+          value_type: TEXT
+          tags:
+            - tag: component
+              value: wlan
+        - uuid: f2f994b81bd248efbc560a40f7c6512d
+          name: 'WLAN Guest: Clients'
+          type: TRAP
+          key: fritzbox.wlan.guest.total_associations
+          tags:
+            - tag: component
+              value: wlan
+      discovery_rules:
+        - uuid: a1b2c3d4e5f64a7b8c9d0e1f2a3b4c5d
+          name: 'Network Devices Discovery'
+          type: TRAP
+          key: fritzbox.netdev.discovery
+          lifetime: 30d
+          description: 'Discovers active network devices from Fritz!Box LUA interface'
+          item_prototypes:
+            - uuid: f6a7b8c9d0e14f2abc4c5d6e7f8a9b0c
+              name: 'Device [{#DEVNAME}]: WLAN Band'
+              type: TRAP
+              key: 'fritzbox.netdev[{#DEVNAME},band]'
+              value_type: TEXT
+              description: 'WLAN frequency band (e.g. 2.4 GHz or 5 GHz, WLAN devices only)'
+              tags:
+                - tag: component
+                  value: netdev
+                - tag: device
+                  value: '{#DEVNAME}'
+            - uuid: c3d4e5f6a7b84c9dae1f2a3b4c5d6e7f
+              name: 'Device [{#DEVNAME}]: IP address'
+              type: TRAP
+              key: 'fritzbox.netdev[{#DEVNAME},ip]'
+              value_type: TEXT
+              description: 'Current IP address of the device'
+              tags:
+                - tag: component
+                  value: netdev
+                - tag: device
+                  value: '{#DEVNAME}'
+            - uuid: e5f6a7b8c9d04e1fab3b4c5d6e7f8a9b
+              name: 'Device [{#DEVNAME}]: WLAN RSSI'
+              type: TRAP
+              key: 'fritzbox.netdev[{#DEVNAME},rssi]'
+              units: dBm
+              description: 'WLAN signal strength in dBm (WLAN devices only)'
+              tags:
+                - tag: component
+                  value: netdev
+                - tag: device
+                  value: '{#DEVNAME}'
+            - uuid: d4e5f6a7b8c94d0e8f2a3b4c5d6e7f8a
+              name: 'Device [{#DEVNAME}]: Speed'
+              type: TRAP
+              key: 'fritzbox.netdev[{#DEVNAME},speed]'
+              value_type: FLOAT
+              units: '!Mbit/s'
+              description: 'Link speed in Mbit/s: WLAN (max of RX/TX) or LAN port speed. The "!" keeps Zabbix from scaling the unit (1000 Mbit/s instead of 1 KMbit/s).'
+              tags:
+                - tag: component
+                  value: netdev
+                - tag: device
+                  value: '{#DEVNAME}'
+            - uuid: b2c3d4e5f6a74b8c9d0e1f2a3b4c5d6e
+              name: 'Device [{#DEVNAME}]: Connection type'
+              type: TRAP
+              key: 'fritzbox.netdev[{#DEVNAME},type]'
+              value_type: TEXT
+              description: 'Connection type: wlan or ethernet'
+              tags:
+                - tag: component
+                  value: netdev
+                - tag: device
+                  value: '{#DEVNAME}'
+      tags:
+        - tag: class
+          value: network
+        - tag: vendor
+          value: AVM
+      macros:
+        - macro: '{$FRITZBOX.CPU_TEMP.HIGH}'
+          value: '90'
+        - macro: '{$FRITZBOX.CPU_TEMP.WARN}'
+          value: '80'
+        - macro: '{$FRITZBOX.CPU_USAGE.WARN}'
+          value: '80'
+        - macro: '{$FRITZBOX.DSL.CRC_ERRORS.THRESHOLD}'
+          value: '100'
+        - macro: '{$FRITZBOX.DSL.NOISE_MARGIN.MIN}'
+          value: '6'
+        - macro: '{$FRITZBOX.FIBER.PACKET_ERRORS.THRESHOLD}'
+          value: '100'
+        - macro: '{$FRITZBOX.RAM_USAGE.WARN}'
+          value: '85'
+        - macro: '{$FRITZBOX.UPTIME.MIN}'
+          value: '600'
+  triggers:
+    - uuid: 59887c14bfd24fb49d6f0ee2d0302ca4
+      expression: 'last(/AVM FritzBox TR-064/fritzbox.wan.connection_uptime)<{$FRITZBOX.UPTIME.MIN} and last(/AVM FritzBox TR-064/fritzbox.device.uptime)>{$FRITZBOX.UPTIME.MIN}'
+      name: 'FritzBox: WAN reconnected (ISP disconnect)'
+      priority: WARNING
+      manual_close: 'YES'
+      tags:
+        - tag: scope
+          value: availability
